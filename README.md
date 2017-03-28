@@ -24,63 +24,71 @@ In your project's Gruntfile, add a section named `async_ssh_exec` to the data ob
 
 ```js
 grunt.initConfig({
-  async_ssh_exec: {
-    options: {
-      // Task-specific options go here.
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
+        async_ssh_exec: {
+            prod: {
+                async: true,
+                server: {
+                    host: ["192.168.72.129", "192.168.72.130"],
+                    port: 22,
+                    username: "root",
+                    password: "123456"
+                },
+                exeCommands: [
+                    { exe: "uptime && uname", silent: false, interrupt: false },
+                    { exe: "bash /home/server/tomcat/start.sh", silent: false, interrupt: false }
+                ]
+            }
+        }
 });
+
+grunt.registerTask('default', ['async_ssh_exec:prod']);
 ```
 
 ### Options
 
-#### options.separator
+#### async
+Type: `boolen`
+
+Default value: `true`
+
+whether execommands async
+
+#### server.host
+Type: `Array`
+
+host list
+
+#### server.port
+Type: `int`
+
+#### server.username
 Type: `String`
-Default value: `',  '`
 
-A string value that is used to do something with whatever.
-
-#### options.punctuation
+#### server.password
 Type: `String`
-Default value: `'.'`
 
-A string value that is used to do something else with whatever else.
+#### exeCommands
+Type: `Array`
 
-### Usage Examples
+#### exeCommands exe
+Type: `String`
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+the shell commands
 
-```js
-grunt.initConfig({
-  async_ssh_exec: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
+#### exeCommands silent
+Type: `boolen`
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+Default value: `false`
 
-```js
-grunt.initConfig({
-  async_ssh_exec: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
+whether show shell STDOUT,STDERR
+
+#### exeCommands interrupt
+Type: `boolen`
+
+Default value: `false`
+
+whether exit when STDERR or other error happen
+
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

@@ -1,7 +1,7 @@
 {
     "name": "grunt-async-ssh-exec",
     "description": "grunt async ssh exec shell commands",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "homepage": "https://github.com/yale8848/grunt-async-ssh-exec.git",
     "author": {
         "name": "yale8848",

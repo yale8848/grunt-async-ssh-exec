@@ -42,9 +42,6 @@ module.exports = function(grunt) {
                     { exe: "cd /home/server/DXHQuestServer/deploy/shell/test && chmod 777 *", silent: false, interrupt: false },
                     { exe: "bash /home/server/DXHQuestServer/deploy/shell/test/start.sh", silent: false, interrupt: false }
                 ]
-            },
-            test: {
-
             }
         },
 
