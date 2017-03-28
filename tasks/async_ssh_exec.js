@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 
-'use strict';
+let ExeCommand = require('../lib/ExeCommand');
 
 module.exports = function(grunt) {
 
@@ -16,39 +16,54 @@ module.exports = function(grunt) {
     grunt.registerMultiTask('async_ssh_exec', 'grunt async ssh exec shell commands', function() {
 
 
-        grunt.log.writeln('hello');
-        return;
-        // Merge task-specific and/or target-specific options with these defaults.
-        var options = this.options({
-            punctuation: '.',
-            separator: ', '
-        });
+        let data = this.data;
+        let hosts = data.server.host;
 
-        // Iterate over all specified file groups.
-        this.files.forEach(function(f) {
-            // Concat specified files.
-            var src = f.src.filter(function(filepath) {
-                // Warn on and remove invalid source files (if nonull was set).
-                if (!grunt.file.exists(filepath)) {
-                    grunt.log.warn('Source file "' + filepath + '" not found.');
-                    return false;
-                } else {
-                    return true;
+        let addDefalutExe = () => {
+            for (let j in data.exeCommands) {
+                if (data.exeCommands[j].silent == undefined) {
+                    data.exeCommands[j].silent = false;
                 }
-            }).map(function(filepath) {
-                // Read file source.
-                return grunt.file.read(filepath);
-            }).join(grunt.util.normalizelf(options.separator));
+                if (data.exeCommands[j].interrupt == undefined) {
+                    data.exeCommands[j].interrupt = false;
+                }
+            }
+            if (data.async == undefined) {
+                data.async = true;
+            }
+            if (typeof data.server.host == 'string') {
+                hosts = [];
+                hosts.push(data.server.host);
+            }
+        };
+        addDefalutExe();
+        if (data.async) {
+            let count = { value: 0 };
+            let done = this.async();
+            for (let i in hosts) {
+                let server = JSON.parse(JSON.stringify(data.server));
+                server.host = hosts[i];
+                let exe = new ExeCommand(server);
 
-            // Handle options.
-            src += options.punctuation;
+                exe.exesAsync(data.exeCommands, done, count, hosts.length);
+            }
+        } else {
 
-            // Write the destination file.
-            grunt.file.write(f.dest, src);
+            (async() => {
+                let done = this.async();
+                for (let i in hosts) {
+                    let server = JSON.parse(JSON.stringify(data.server));
+                    server.host = hosts[i];
+                    let exe = new ExeCommand(server);
 
-            // Print a success message.
-            grunt.log.writeln('File "' + f.dest + '" created.');
-        });
+                    await exe.exesSync(data.exeCommands);
+                    if (i == hosts.length - 1) {
+                        done();
+                    }
+                }
+
+            })();
+        }
     });
 
 };

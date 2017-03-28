@@ -30,20 +30,21 @@ module.exports = function(grunt) {
 
         // Configuration to be run (and then tested).
         async_ssh_exec: {
-            default_options: {
-                options: {},
-                files: {
-                    'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-                }
-            },
-            custom_options: {
-                options: {
-                    separator: ': ',
-                    punctuation: ' !!!'
+            main: {
+                async: false,
+                server: {
+                    host: ["192.168.72.129", "192.168.72.130"],
+                    port: 22,
+                    username: "root",
+                    password: "123456"
                 },
-                files: {
-                    'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-                }
+                exeCommands: [
+                    { exe: "cd /home/server/DXHQuestServer/deploy/shell/test && chmod 777 *", silent: false, interrupt: false },
+                    { exe: "bash /home/server/DXHQuestServer/deploy/shell/test/start.sh", silent: false, interrupt: false }
+                ]
+            },
+            test: {
+
             }
         },
 
@@ -67,6 +68,6 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['clean', 'async_ssh_exec', 'nodeunit']);
 
     // By default, lint and run all tests.
-    grunt.registerTask('default', ['async_ssh_exec:default_options', ]);
+    grunt.registerTask('default', ['async_ssh_exec:main']);
 
 };
