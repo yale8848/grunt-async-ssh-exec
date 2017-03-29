@@ -1,5 +1,7 @@
 # grunt-async-ssh-exec
 
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 > grunt async ssh exec shell commands
 
 ## Getting Started
